@@ -35,6 +35,10 @@ const getSingleUser = async(req, res) =>{
 };
 
 const updateUser = async (req,res) =>{
+    const {id ,first_name, last_name} = req.body;
+    const { rows: [newUser]}=
+         await db.query(`UPDATE users SET(id, first_name, last_name) VALUES ($1 , $2, $3) RETURNING *`, [id, first_name, last_name])
+        res.json(newUser)
     try{
 
     }catch{res.status(500).json({error : error.message})}
@@ -42,7 +46,12 @@ const updateUser = async (req,res) =>{
 
 const deleteUser = async(req, res)=>{
     try{
-
+    
+            const {params: {id}} = req;
+            const {rowCount, rows: [user]}=
+            await db.query(`DELETE FROM users WHERE id = $1`, [id]);
+            res.json(user);
+     
     }catch(error){
         res.status(500).json({ error: error.message})
     }
